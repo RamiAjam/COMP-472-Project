@@ -1,19 +1,36 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
-public class Node {
+public class Node implements Comparable<Node>{
 
     private String[][] state = new String[3][3]; // the state of the puzzle represented as a 3 by 3 matrix
-    private ArrayList<Node> children = new ArrayList<>(); // the generated children of this node
-    private String[][] parent; // the parent of this node
-    public String blankPos; // gets the position of the blank space
+    private final ArrayList<Node> children = new ArrayList<>(); // the generated children of this node
+    private Node parent; // the parent of this node
+    private String blankPos; // gets the position of the blank space
+    private String parentToChildMove = null; // represents the move done to go from parent to child ( used for path tracking )
+    private String stateStringRep = ""; // represents the state as a single string ( used to be added to the closed list )
+    private final ArrayList<String> stateArrRep = new ArrayList<>(); // represents the state as a single string array ( used in permutation inversion )
+    private int ham , man , per , inadmissible;
 
     public Node(String[][] stateMatrix){
         state = stateMatrix;
         parent = null;
+
+        for(int i = 0; i < stateMatrix.length; i++){
+            for(int j = 0; j < stateMatrix.length; j++){
+                stateStringRep += stateMatrix[i][j];
+                stateArrRep.add(stateMatrix[i][j]);
+            }
+        }
     }
 
     public Node(String[] stateMatrix){
+
+        for (String x: stateMatrix) {
+            stateStringRep += x;
+            stateArrRep.add(x);
+        }
 
         parent = null;
 
@@ -39,28 +56,98 @@ public class Node {
 
     }
 
+    public int getInadmissible() {
+        return inadmissible;
+    }
+
+    public void setInadmissible(int inadmissible) {
+        this.inadmissible = inadmissible;
+    }
+
+    public int getHam() {
+        return ham;
+    }
+
+    public void setHam(int ham) {
+        this.ham = ham;
+    }
+
+    public int getMan() {
+        return man;
+    }
+
+    public void setMan(int man) {
+        this.man = man;
+    }
+
+    public int getPer() {
+        return per;
+    }
+
+    public void setPer(int per) {
+        this.per = per;
+    }
+
     public void setBlankPos(String blankPos){
         this.blankPos = blankPos;
     }
 
-    public String[][] getParent(){
+    public String getStateStringRep() {
+        return stateStringRep;
+    }
+
+    public String getParentToChildMove() {
+        return parentToChildMove;
+    }
+
+    public ArrayList<String> getStateArrRep() {
+        return stateArrRep;
+    }
+
+    public void setParentToChildMove(String parentToChildMove) {
+        this.parentToChildMove = parentToChildMove;
+    }
+
+    public Node getParent(){
         return parent;
     }
 
-    public void setParent(String[][] parent){
+    public void setParent(Node parent){
         this.parent = parent;
-    }
-
-    public void setChildren(ArrayList<Node> children) {
-        this.children = children;
     }
 
     public String[][] getState() {
         return state;
     }
 
-    public void setState(String[][] state) {
-        this.state = state;
+    @Override
+    public int compareTo(Node o) {
+        return this.getHam() - o.getHam();
+    }
+
+    public static Comparator<Node> hammingCompare
+            = Comparator.comparingInt(Node::getHam);
+
+    public static Comparator<Node> manhattanCompare
+            = Comparator.comparingInt(Node::getMan);
+
+    public static Comparator<Node> permutationCompare
+            = Comparator.comparingInt(Node::getPer);
+
+    public static Comparator<Node> inadmissibleCompare
+            = Comparator.comparingInt(Node::getInadmissible);
+
+    //compares the current node with the node that is being passed
+    public boolean compareNodes(Node b){
+
+        for(int i = 0; i < 3 ; i++){
+            for(int j = 0; j < 3; j++){
+                if(!state[i][j].equals(b.getState()[i][j])){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     // Generates all possible children of the parent
@@ -91,12 +178,14 @@ public class Node {
                 Node childR = new Node(child_r);
                 Node childD = new Node(child_d);
 
-                childR.setParent(state);
-                childD.setParent(state);
+                childR.setParent(this);
+                childD.setParent(this);
 
                 childR.setBlankPos("01");
                 childD.setBlankPos("10");
 
+                childR.setParentToChildMove("Right");
+                childD.setParentToChildMove("Down");
 
                 children.add(childR);
                 children.add(childD);
@@ -133,13 +222,17 @@ public class Node {
                 Node childD = new Node(child_d);
                 Node childL = new Node(child_l);
 
-                childR.setParent(state);
-                childD.setParent(state);
-                childL.setParent(state);
+                childR.setParent(this);
+                childD.setParent(this);
+                childL.setParent(this);
 
                 childR.setBlankPos("02");
                 childD.setBlankPos("11");
                 childL.setBlankPos("00");
+
+                childR.setParentToChildMove("Right");
+                childD.setParentToChildMove("Down");
+                childL.setParentToChildMove("Left");
 
                 children.add(childR);
                 children.add(childD);
@@ -169,11 +262,14 @@ public class Node {
                 Node childD = new Node(child_d);
                 Node childL = new Node(child_l);
 
-                childD.setParent(state);
-                childL.setParent(state);
+                childD.setParent(this);
+                childL.setParent(this);
 
                 childD.setBlankPos("12");
                 childL.setBlankPos("01");
+
+                childD.setParentToChildMove("Down");
+                childL.setParentToChildMove("Left");
 
                 children.add(childD);
                 children.add(childL);
@@ -210,17 +306,22 @@ public class Node {
                 Node childD = new Node(child_d);
                 Node childU = new Node(child_u);
 
-                childR.setParent(state);
-                childD.setParent(state);
-                childU.setParent(state);
+                childR.setParent(this);
+                childD.setParent(this);
+                childU.setParent(this);
 
                 childR.setBlankPos("11");
                 childD.setBlankPos("20");
                 childU.setBlankPos("00");
 
-                children.add(childR);
+                childR.setParentToChildMove("Right");
+                childD.setParentToChildMove("Down");
+                childU.setParentToChildMove("Up");
+
                 children.add(childD);
                 children.add(childU);
+                children.add(childR);
+
 
             }
             case "11" -> { //Blank is at (1,1) position
@@ -262,20 +363,27 @@ public class Node {
                 Node childU = new Node(child_u);
                 Node childL = new Node(child_l);
 
-                childR.setParent(state);
-                childD.setParent(state);
-                childU.setParent(state);
-                childL.setParent(state);
+                childR.setParent(this);
+                childD.setParent(this);
+                childU.setParent(this);
+                childL.setParent(this);
 
                 childR.setBlankPos("12");
                 childD.setBlankPos("21");
                 childU.setBlankPos("01");
                 childL.setBlankPos("10");
 
+                childR.setParentToChildMove("Right");
+                childD.setParentToChildMove("Down");
+                childL.setParentToChildMove("Left");
+                childU.setParentToChildMove("Up");
+
+
                 children.add(childR);
                 children.add(childD);
-                children.add(childU);
                 children.add(childL);
+                children.add(childU);
+
 
             }
             case "12" -> { //Blank is at (1,2) position
@@ -309,17 +417,21 @@ public class Node {
                 Node childU = new Node(child_u);
                 Node childL = new Node(child_l);
 
-                childD.setParent(state);
-                childU.setParent(state);
-                childL.setParent(state);
+                childD.setParent(this);
+                childU.setParent(this);
+                childL.setParent(this);
 
                 childD.setBlankPos("22");
                 childU.setBlankPos("02");
                 childL.setBlankPos("11");
 
+                childD.setParentToChildMove("Down");
+                childL.setParentToChildMove("Left");
+                childU.setParentToChildMove("Up");
+
                 children.add(childD);
-                children.add(childU);
                 children.add(childL);
+                children.add(childU);
 
             }
             case "20" -> { //Blank is at (2,0) position
@@ -346,11 +458,14 @@ public class Node {
                 Node childR = new Node(child_r);
                 Node childU = new Node(child_u);
 
-                childR.setParent(state);
-                childU.setParent(state);
+                childR.setParent(this);
+                childU.setParent(this);
 
                 childR.setBlankPos("21");
                 childU.setBlankPos("10");
+
+                childR.setParentToChildMove("Right");
+                childU.setParentToChildMove("Up");
 
                 children.add(childR);
                 children.add(childU);
@@ -387,17 +502,21 @@ public class Node {
                 Node childU = new Node(child_u);
                 Node childL = new Node(child_l);
 
-                childR.setParent(state);
-                childU.setParent(state);
-                childL.setParent(state);
+                childR.setParent(this);
+                childU.setParent(this);
+                childL.setParent(this);
 
                 childR.setBlankPos("22");
                 childU.setBlankPos("11");
                 childL.setBlankPos("20");
 
+                childR.setParentToChildMove("Right");
+                childL.setParentToChildMove("Left");
+                childU.setParentToChildMove("Up");
+
                 children.add(childR);
-                children.add(childU);
                 children.add(childL);
+                children.add(childU);
 
             }
             case "22" -> { //Blank is at (2,2) position
@@ -423,14 +542,17 @@ public class Node {
                 Node childU = new Node(child_u);
                 Node childL = new Node(child_l);
 
-                childU.setParent(state);
-                childL.setParent(state);
+                childU.setParent(this);
+                childL.setParent(this);
 
                 childU.setBlankPos("12");
                 childL.setBlankPos("21");
 
-                children.add(childU);
+                childL.setParentToChildMove("Left");
+                childU.setParentToChildMove("Up");
+
                 children.add(childL);
+                children.add(childU);
 
             }
         }
