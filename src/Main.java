@@ -10,15 +10,15 @@ public class Main {
     private static final Node DFS_Example = new Node(new String[]{"3","5","B","2","1","4","8","7","6"});
     private static final Node goalState = new Node(new String[]{"1","2","3","8","B","4","7","6","5"});
 
-    private static final Queue<Node> openList = new PriorityQueue<>(Node.hammingCompare);
+    private static final Queue<Node> openList = new PriorityQueue<>(Node.permutationCompare);
 
     public static void main(String[] args) {
-
-//        Best_First bf = new Best_First(DFS_Example, goalState);
-//        initialState.setHam(bf.hammingDistance(initialState));
-//        test.setHam(bf.hammingDistance(test));
-//        temp.setHam(bf.hammingDistance(temp));
-//        temp2.setHam(bf.hammingDistance(temp2));
+//
+//       Best_First bf = new Best_First(DFS_Example, goalState);
+//        initialState.setHam(bf.permutationInversion(initialState));
+//        test.setPer(bf.permutationInversion(test));
+//        temp.setPer(bf.permutationInversion(temp));
+//        temp2.setPer(bf.permutationInversion(temp2));
 //
 //        openList.add(temp);
 //        openList.add(initialState);
@@ -37,7 +37,7 @@ public class Main {
 //
 //        int x = openList.size();
 //        for(int i = 0; i < x; i++){
-//            System.out.println(openList.poll().getHam());
+//            System.out.println(openList.poll().getPer());
 //            //printMatrix(openList.poll());
 //        }
 

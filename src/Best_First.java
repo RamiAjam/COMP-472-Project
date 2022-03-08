@@ -6,12 +6,16 @@ public class Best_First{
     private int pathCost;
     private ArrayList<String> pathToGoal = new ArrayList<>();
     private final Node goalState;
+
     private final Queue<String> openListHamStr = new LinkedList<>();
     private final Queue<Node> openListHam = new PriorityQueue<>(Node.hammingCompare);
+
     private final Queue<String> openListManStr = new LinkedList<>();
     private final Queue<Node> openListMan = new PriorityQueue<>(Node.manhattanCompare);
+
     private final Queue<String> openListPerStr = new LinkedList<>();
     private final Queue<Node> openListPer = new PriorityQueue<>(Node.permutationCompare);
+
     private final Queue<String> openListInadmissibleStr = new LinkedList<>();
     private final Queue<Node> openListInadmissible = new PriorityQueue<>(Node.inadmissibleCompare);
 
@@ -283,19 +287,85 @@ public class Best_First{
         int counter = 0;
 
         for(int i = 0; i < node.getStateArrRep().size(); i++){
-            if(node.getStateArrRep().get(i).equals("B"))
-                continue;
-            for(int j = i+1; j < node.getStateArrRep().size(); j++){
-                if(node.getStateArrRep().get(j).equals("B"))
-                    continue;
 
-                if(Integer.parseInt(node.getStateArrRep().get(j)) < Integer.parseInt(node.getStateArrRep().get(i)))
-                    counter++;
+            switch (node.getStateArrRep().get(i)){
+
+                case "1":
+                    break;
+
+                case "2":
+                    for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
+                        if (node.getStateArrRep().get(j).equals("1")) {
+                            counter += 1;
+                        }
+                    }
+                    break;
+
+                case "3":
+                    for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
+                        if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2")) {
+                            counter += 1;
+                        }
+                    }
+                    break;
+
+                case "4":
+                    for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
+                        if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
+                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("B")) {
+                            counter += 1;
+                        }
+                    }
+                    break;
+
+                case "5":
+                    for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
+                        if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
+                                || node.getStateArrRep().get(j).equals("4") || node.getStateArrRep().get(j).equals("6") || node.getStateArrRep().get(j).equals("7")
+                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("B")) {
+                            counter += 1;
+                        }
+                    }
+                    break;
+
+                case "6":
+                    for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
+                        if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
+                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("B") || node.getStateArrRep().get(j).equals("4")
+                                || node.getStateArrRep().get(j).equals("7")) {
+                            counter += 1;
+                        }
+                    }
+                    break;
+
+                case "7":
+                    for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
+                        if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
+                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("B") || node.getStateArrRep().get(j).equals("4")) {
+                            counter += 1;
+                        }
+                    }
+                    break;
+
+                case "8":
+                    for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
+                        if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")) {
+                            counter += 1;
+                        }
+                    }
+                    break;
+
+                case "B":
+                    for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
+                        if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
+                                || node.getStateArrRep().get(j).equals("8")) {
+                            counter += 1;
+                        }
+                    }
+                    break;
             }
         }
-
         return counter;
-
     }
 
     // find the inadmissible heuristic between the passed state and the goal state
