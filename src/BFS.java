@@ -8,8 +8,8 @@ public class BFS {
     private int pathCost = 0;
     private final ArrayList<String> pathToGoal = new ArrayList<>();
     private final Node goalState;
-    private final Queue<Node> openList = new LinkedList<>();
     private final ArrayList<String> closedList = new ArrayList<>();
+    private final Queue<Node> openList = new LinkedList<>();
     private final Queue<String> openListStr = new LinkedList<>();
 
     public BFS(Node root, Node goalState){

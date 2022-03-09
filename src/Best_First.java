@@ -1,3 +1,5 @@
+import com.sun.jdi.ArrayReference;
+
 import java.util.*;
 
 public class Best_First{
@@ -7,17 +9,17 @@ public class Best_First{
     private ArrayList<String> pathToGoal = new ArrayList<>();
     private final Node goalState;
 
-    private final Queue<String> openListHamStr = new LinkedList<>();
+    private final ArrayList<String> openListHamStr = new ArrayList<>();
     private final Queue<Node> openListHam = new PriorityQueue<>(Node.hammingCompare);
 
-    private final Queue<String> openListManStr = new LinkedList<>();
+    private final ArrayList<String> openListManStr = new ArrayList<>();
     private final Queue<Node> openListMan = new PriorityQueue<>(Node.manhattanCompare);
 
-    private final Queue<String> openListPerStr = new LinkedList<>();
+    private final ArrayList<String> openListPerStr = new ArrayList<>();
     private final Queue<Node> openListPer = new PriorityQueue<>(Node.permutationCompare);
 
-    private final Queue<String> openListInadmissibleStr = new LinkedList<>();
-    private final Queue<Node> openListInadmissible = new PriorityQueue<>(Node.inadmissibleCompare);
+    private final ArrayList<String> openListNilssonStr = new ArrayList<>();
+    private final Queue<Node> openListNilsson = new PriorityQueue<>(Node.inadmissibleCompare);
 
 
 
@@ -30,8 +32,8 @@ public class Best_First{
         openListManStr.add(root.getStateStringRep());
         openListPer.add(root);
         openListPerStr.add(root.getStateStringRep());
-        openListInadmissible.add(root);
-        openListInadmissibleStr.add(root.getStateStringRep());
+        openListNilsson.add(root);
+        openListNilssonStr.add(root.getStateStringRep());
 
     }
 
@@ -56,10 +58,16 @@ public class Best_First{
         Node currentNode;
 
         do{
-
             searchPathCost += 1; // the number of nodes checked
             currentNode = openListHam.poll(); // gets the head of the queue
-            openListHamStr.poll();
+
+            // finds the state in the string representation list and removes it
+            for(int i = 0; i < openListHamStr.size(); i++){
+                if(openListHamStr.get(i).equals(currentNode.getStateStringRep())){
+                    openListHamStr.remove(i);
+                    break;
+                }
+            }
 
             //checks if the root node is the goal state
             if(currentNode.compareNodes(goalState)){
@@ -108,7 +116,14 @@ public class Best_First{
 
             searchPathCost += 1; // the number of nodes checked
             currentNode = openListMan.poll(); // gets the head of the queue
-            openListManStr.poll();
+
+            // finds the state in the string representation list and removes it
+            for(int i = 0; i < openListManStr.size(); i++){
+                if(openListManStr.get(i).equals(currentNode.getStateStringRep())){
+                    openListManStr.remove(i);
+                    break;
+                }
+            }
 
             //checks if the root node is the goal state
             if(currentNode.compareNodes(goalState)){
@@ -157,7 +172,14 @@ public class Best_First{
 
             searchPathCost += 1; // the number of nodes checked
             currentNode = openListPer.poll(); // gets the head of the queue
-            openListPerStr.poll();
+
+            // finds the state in the string representation list and removes it
+            for(int i = 0; i < openListPerStr.size(); i++){
+                if(openListPerStr.get(i).equals(currentNode.getStateStringRep())){
+                    openListPerStr.remove(i);
+                    break;
+                }
+            }
 
             //checks if the root node is the goal state
             if(currentNode.compareNodes(goalState)){
@@ -205,8 +227,15 @@ public class Best_First{
         do{
 
             searchPathCost += 1; // the number of nodes checked
-            currentNode = openListInadmissible.poll(); // gets the head of the queue
-            openListInadmissibleStr.poll();
+            currentNode = openListNilsson.poll(); // gets the head of the queue
+
+            // finds the state in the string representation list and removes it
+            for(int i = 0; i < openListNilssonStr.size(); i++){
+                if(openListNilssonStr.get(i).equals(currentNode.getStateStringRep())){
+                    openListNilssonStr.remove(i);
+                    break;
+                }
+            }
 
             //checks if the root node is the goal state
             if(currentNode.compareNodes(goalState)){
@@ -230,16 +259,16 @@ public class Best_First{
 
             // checks if the child is in the closed list then adds it to the BEGINNING of the list
             for(Node child: currentNode.generateChildren()){
-                child.setInadmissible(inadmissibleHeuristic(child));
-                if(!closedList.contains(child.getStateStringRep()) && !openListInadmissibleStr.contains(child.getStateStringRep())){
-                    openListInadmissible.add(child);
-                    openListInadmissibleStr.add(child.getStateStringRep());
+                child.setInadmissible(nilssonHeuristic(child));
+                if(!closedList.contains(child.getStateStringRep()) && !openListNilssonStr.contains(child.getStateStringRep())){
+                    openListNilsson.add(child);
+                    openListNilssonStr.add(child.getStateStringRep());
                 }
             }
 
             closedList.add(currentNode.getStateStringRep());
 
-        }while(!openListInadmissible.isEmpty());
+        }while(!openListNilsson.isEmpty());
         return false;
     }
 
@@ -250,6 +279,10 @@ public class Best_First{
 
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
+
+                if(node.getState()[i][j].equals("B"))
+                    continue;
+
                 if(!node.getState()[i][j].equals(goalState.getState()[i][j]))
                     counter++;
             }
@@ -265,6 +298,10 @@ public class Best_First{
 
         for (int i = 0; i < 3; i++){
             for (int j = 0; j < 3; j++){
+
+                if(node.getState()[i][j].equals("B"))
+                    continue;
+
                 outerloop:
                 for(int k = 0; k < 3; k++){
                     for(int m = 0; m < 3; m++){
@@ -274,7 +311,6 @@ public class Best_First{
                         }
                     }
                 }
-
             }
         }
 
@@ -291,6 +327,8 @@ public class Best_First{
             switch (node.getStateArrRep().get(i)){
 
                 case "1":
+
+                case "B":
                     break;
 
                 case "2":
@@ -312,7 +350,7 @@ public class Best_First{
                 case "4":
                     for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
                         if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
-                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("B")) {
+                                || node.getStateArrRep().get(j).equals("8")) {
                             counter += 1;
                         }
                     }
@@ -322,7 +360,7 @@ public class Best_First{
                     for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
                         if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
                                 || node.getStateArrRep().get(j).equals("4") || node.getStateArrRep().get(j).equals("6") || node.getStateArrRep().get(j).equals("7")
-                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("B")) {
+                                || node.getStateArrRep().get(j).equals("8")) {
                             counter += 1;
                         }
                     }
@@ -331,7 +369,7 @@ public class Best_First{
                 case "6":
                     for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
                         if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
-                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("B") || node.getStateArrRep().get(j).equals("4")
+                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("4")
                                 || node.getStateArrRep().get(j).equals("7")) {
                             counter += 1;
                         }
@@ -341,7 +379,7 @@ public class Best_First{
                 case "7":
                     for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
                         if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
-                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("B") || node.getStateArrRep().get(j).equals("4")) {
+                                || node.getStateArrRep().get(j).equals("8") || node.getStateArrRep().get(j).equals("4")) {
                             counter += 1;
                         }
                     }
@@ -354,35 +392,51 @@ public class Best_First{
                         }
                     }
                     break;
-
-                case "B":
-                    for(int j = i + 1; j < node.getStateArrRep().size(); j++) {
-                        if (node.getStateArrRep().get(j).equals("1") || node.getStateArrRep().get(j).equals("2") || node.getStateArrRep().get(j).equals("3")
-                                || node.getStateArrRep().get(j).equals("8")) {
-                            counter += 1;
-                        }
-                    }
-                    break;
             }
         }
         return counter;
     }
 
     // find the inadmissible heuristic between the passed state and the goal state
-    public int inadmissibleHeuristic(Node node){
+    // This heuristic would take the manhattan distance at first. Then, checks the outer tiles if the next tile is the value that should come after the
+    // value of the current tile im at. If so, skip - else add 6. Also, it checks if the middle tile is the blank. if so, skip - else add 3
+    public int nilssonHeuristic(Node node){
 
-        int counter = 0;
+        int counter = manhattanDistance(node);
+        ArrayList<String> temp = new ArrayList<>();
 
-        for(int i = 0; i < node.getStateArrRep().size(); i++){
-            if(node.getStateArrRep().get(i).equals("B"))
-                continue;
-            for(int j = i+1; j < node.getStateArrRep().size(); j++){
-                if(node.getStateArrRep().get(j).equals("B"))
-                    continue;
+        // changing the array into the nelsson sequence
+        for(int i = 0; i < 3; i++){
+            temp.add(node.getStateArrRep().get(i));
+        }
+        temp.add(node.getStateArrRep().get(5));
+        for(int i = 8; i > 5; i--){
+            temp.add(node.getStateArrRep().get(i));
+        }
+        temp.add(node.getStateArrRep().get(3));
+        temp.add(node.getStateArrRep().get(4));
 
-                if(Integer.parseInt(node.getStateArrRep().get(j)) < Integer.parseInt(node.getStateArrRep().get(i)))
-                    counter++;
+        if(!temp.get(8).equals("B")){
+            counter += 3; // this implies the + 1 multiplied by 3
+        }
+
+        for(int i = 0; i < temp.size()-2; i++){
+            if(temp.get(i).equals("B")){
+                if(i == 0){ // handles the case when its the end of the clockwise loop and 7th index is checking if 1st index is the one that should come next
+                    counter += 6;
+                }
+            }else if(temp.get(i+1).equals("B")){
+                counter += 6;
+            }else{
+                if(((Integer.parseInt(temp.get(i+1))-1) != Integer.parseInt(temp.get(i)))){
+                    counter += 6; // this implies the + 2 multiplied by 3
+                }
             }
+        }
+
+        if(!temp.get(7).equals("B") && !temp.get(0).equals("B")){
+            if((Integer.parseInt(temp.get(0))-1) != Integer.parseInt(temp.get(7)))
+                counter += 6;
         }
 
         return counter;

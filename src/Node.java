@@ -11,11 +11,13 @@ public class Node implements Comparable<Node>{
     private String parentToChildMove = null; // represents the move done to go from parent to child ( used for path tracking )
     private String stateStringRep = ""; // represents the state as a single string ( used to be added to the closed list )
     private final ArrayList<String> stateArrRep = new ArrayList<>(); // represents the state as a single string array ( used in permutation inversion )
-    private int ham , man , per , inadmissible;
+    private int ham, man , per , inadmissible , fxMan , fxHam, fxPer, fxIndamissible;
+    private int nodeCost; // this represents the cost needed to get this node ( parent's cost + 1 )
 
     public Node(String[][] stateMatrix){
         state = stateMatrix;
         parent = null;
+        nodeCost = 0;
 
         for(int i = 0; i < stateMatrix.length; i++){
             for(int j = 0; j < stateMatrix.length; j++){
@@ -33,6 +35,7 @@ public class Node implements Comparable<Node>{
         }
 
         parent = null;
+        nodeCost = 0;
 
         // changes the 1d array into a 2d array
         for(int i = 0 ; i < 3 ; i++){
@@ -54,6 +57,46 @@ public class Node implements Comparable<Node>{
             }
         }
 
+    }
+
+    public int getFxMan() {
+        return fxMan;
+    }
+
+    public void setFxMan(int fxMan) {
+        this.fxMan = fxMan;
+    }
+
+    public int getFxHam() {
+        return fxHam;
+    }
+
+    public void setFxHam(int fxHam) {
+        this.fxHam = fxHam;
+    }
+
+    public int getFxPer() {
+        return fxPer;
+    }
+
+    public void setFxPer(int fxPer) {
+        this.fxPer = fxPer;
+    }
+
+    public int getFxIndamissible() {
+        return fxIndamissible;
+    }
+
+    public void setFxIndamissible(int fxIndamissible) {
+        this.fxIndamissible = fxIndamissible;
+    }
+
+    public int getNodeCost() {
+        return nodeCost;
+    }
+
+    public void setNodeCost(int nodeCost) {
+        this.nodeCost = nodeCost;
     }
 
     public int getInadmissible() {
@@ -122,20 +165,20 @@ public class Node implements Comparable<Node>{
 
     @Override
     public int compareTo(Node o) {
-        return this.getHam() - o.getHam();
+        return this.getMan() - o.getMan();
     }
 
-    public static Comparator<Node> hammingCompare
-            = Comparator.comparingInt(Node::getHam);
+    // used in the Best First Search algorithm to sort the lists
+    public static Comparator<Node> hammingCompare = Comparator.comparingInt(Node::getHam);
+    public static Comparator<Node> manhattanCompare = Comparator.comparingInt(Node::getMan);
+    public static Comparator<Node> permutationCompare = Comparator.comparingInt(Node::getPer);
+    public static Comparator<Node> inadmissibleCompare = Comparator.comparingInt(Node::getInadmissible);
 
-    public static Comparator<Node> manhattanCompare
-            = Comparator.comparingInt(Node::getMan);
-
-    public static Comparator<Node> permutationCompare
-            = Comparator.comparingInt(Node::getPer);
-
-    public static Comparator<Node> inadmissibleCompare
-            = Comparator.comparingInt(Node::getInadmissible);
+    // used in the A* Search algorithm to sort the lists
+    public static Comparator<Node> hammingStarCompare = Comparator.comparingInt((Node::getFxHam));
+    public static Comparator<Node> manhattanStarCompare = Comparator.comparingInt((Node::getFxMan));
+    public static Comparator<Node> permutationStarCompare = Comparator.comparingInt((Node::getFxPer));
+    public static Comparator<Node> inadmissibleStarCompare = Comparator.comparingInt((Node::getFxIndamissible));
 
     //compares the current node with the node that is being passed
     public boolean compareNodes(Node b){
