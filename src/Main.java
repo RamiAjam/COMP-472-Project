@@ -1,12 +1,8 @@
-import java.util.*;
-
 public class Main {
 
     private static final Node initialState = new Node(new String[]{"5","1","4","7","B","6","3","8","2"});
     private static final Node initialState2 = new Node(new String[]{"3","5","B","2","1","4","8","7","6"});
     private static final Node goalState = new Node(new String[]{"1","2","3","8","B","4","7","6","5"});
-
-    private static final Queue<Node> openList = new PriorityQueue<>(Node.permutationCompare);
 
     public static void main(String[] args) {
 
