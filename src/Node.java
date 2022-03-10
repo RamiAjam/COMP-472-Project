@@ -11,9 +11,10 @@ public class Node implements Comparable<Node>{
     private String parentToChildMove = null; // represents the move done to go from parent to child ( used for path tracking )
     private String stateStringRep = ""; // represents the state as a single string ( used to be added to the closed list )
     private final ArrayList<String> stateArrRep = new ArrayList<>(); // represents the state as a single string array ( used in permutation inversion )
-    private int ham, man , per , inadmissible , fxMan , fxHam, fxPer, fxIndamissible;
+    private int ham, man , per , inadmissible , fxMan , fxHam, fxPer, fxIndamissible; // holds the values of the heuristic calculations for Best First and A* search algorithms 
     private int nodeCost; // this represents the cost needed to get this node ( parent's cost + 1 )
 
+    // constructor using a double matrix
     public Node(String[][] stateMatrix){
         state = stateMatrix;
         parent = null;
@@ -27,6 +28,7 @@ public class Node implements Comparable<Node>{
         }
     }
 
+    // contrustor using a single matrix
     public Node(String[] stateMatrix){
 
         for (String x: stateMatrix) {
@@ -193,7 +195,7 @@ public class Node implements Comparable<Node>{
         return true;
     }
 
-    // Generates all possible children of the parent
+    // Generates all possible children of the parent ( generation follows Right, down, left, up )
     public ArrayList<Node> generateChildren() {
 
         //Blank is at (0,0) position

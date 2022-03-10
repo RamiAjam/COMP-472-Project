@@ -21,9 +21,14 @@ public class Main {
 //        System.out.println("Search Path Cost: " + bfs.getSearchPathCost());
 //        System.out.println("Path Cost: " + bfs.getPathCost());
 //
-//        System.out.println("Path to Goal is: ");
+//        System.out.println("Path to Goal is ( in terms of moves ): ");
 //        for (String x: bfs.getPathToGoal()) {
 //            System.out.print(x + ", ");
+//        }
+//        System.out.println();
+//        System.out.println("Path to Goal is ( in terms of nodes ): ");
+//        for (Node x: bfs.getPathToGoalNode()) {
+//            printMatrix(x);
 //        }
         /*****************************************************************************************************/
 
@@ -43,12 +48,18 @@ public class Main {
 //        for (String x: dfs.getPathToGoal()) {
 //            System.out.print(x + ", ");
 //        }
+//
+//        System.out.println();
+//        System.out.println("Path to Goal is ( in terms of nodes ): ");
+//        for (Node x: bfs.getPathToGoalNode()) {
+//            printMatrix(x);
+//        }
         /*****************************************************************************************************/
 
         /********************************* Best First Search - Admissible Heuristics **********************************************/
 
 //        System.out.println("\n");
-//        Best_First bf = new Best_First(initialState, goalState);
+//        Best_First bf = new Best_First(initialState2, goalState);
 //
 //        /************ Hamming Distance ******************/
 //        if(!bf.solveHamming()){
@@ -64,6 +75,12 @@ public class Main {
 //        for (String x: bf.getPathToGoal()) {
 //            System.out.print(x + ", ");
 //        }
+//
+////        System.out.println();
+////        System.out.println("Path to Goal is ( in terms of nodes ): ");
+////        for (Node x: bf.getPathToGoalNode()) {
+////            printMatrix(x);
+////        }
 //
 //        /************ Manhattan Distance ******************/
 //        System.out.println("\n");
@@ -82,6 +99,12 @@ public class Main {
 //            System.out.print(x + ", ");
 //        }
 //
+////        System.out.println();
+////        System.out.println("Path to Goal is ( in terms of nodes ): ");
+////        for (Node x: bf.getPathToGoalNode()) {
+////            printMatrix(x);
+////        }
+//
 //        /************ Permutation Inversion ******************/
 //        System.out.println("\n");
 //
@@ -99,6 +122,12 @@ public class Main {
 //            System.out.print(x + ", ");
 //        }
 //
+////        System.out.println();
+////        System.out.println("Path to Goal is ( in terms of nodes ): ");
+////        for (Node x: bf.getPathToGoalNode()) {
+////            printMatrix(x);
+////        }
+//
 //        /************ Inadmissible Heuristics ******************/
 //        System.out.println("\n");
 //
@@ -115,85 +144,114 @@ public class Main {
 //        for (String x: bf.getPathToGoal()) {
 //            System.out.print(x + ", ");
 //        }
+//
+////        System.out.println();
+////        System.out.println("Path to Goal is ( in terms of nodes ): ");
+////        for (Node x: bf.getPathToGoalNode()) {
+////            printMatrix(x);
+////        }
         /*****************************************************************************************************/
 
         /********************************* A* Search - Admissible Heuristics **********************************************/
 
-//        System.out.println("\n");
-//        AStar aStar = new AStar(initialState, goalState);
-//
-//        /************ Hamming Distance ******************/
-//        if(!aStar.solveHamming()){
-//            System.out.println("Failure to find solution");
-//            return;
+        System.out.println("\n");
+        AStar aStar = new AStar(initialState2, goalState);
+
+        /************ Hamming Distance ******************/
+        if(!aStar.solveHamming()){
+            System.out.println("Failure to find solution");
+            return;
+        }
+        System.out.println("Solution Found using A* Search - Hamming Distance!!");
+
+        System.out.println("Search Path Cost: " + aStar.getSearchPathCost());
+        System.out.println("Path Cost: " + aStar.getPathCost());
+
+        System.out.println("Path to Goal is: ");
+        for (String x: aStar.getPathToGoal()) {
+            System.out.print(x + ", ");
+        }
+
+//        System.out.println();
+//        System.out.println("Path to Goal is ( in terms of nodes ): ");
+//        for (Node x: aStar.getPathToGoalNode()) {
+//            printMatrix(x);
 //        }
-//        System.out.println("Solution Found using A* Search - Hamming Distance!!");
-//
-//        System.out.println("Search Path Cost: " + aStar.getSearchPathCost());
-//        System.out.println("Path Cost: " + aStar.getPathCost());
-//
-//        System.out.println("Path to Goal is: ");
-//        for (String x: aStar.getPathToGoal()) {
-//            System.out.print(x + ", ");
+
+        /************ Manhattan Distance ******************/
+        System.out.println("\n");
+
+        if(!aStar.solveManhattan()){
+            System.out.println("Failure to find solution");
+            return;
+        }
+        System.out.println("Solution Found using A* Search - Manhattan Distance!!");
+
+        System.out.println("Search Path Cost: " + aStar.getSearchPathCost());
+        System.out.println("Path Cost: " + aStar.getPathCost());
+
+        System.out.println("Path to Goal is: ");
+        for (String x: aStar.getPathToGoal()) {
+            System.out.print(x + ", ");
+        }
+
+//        System.out.println();
+//        System.out.println("Path to Goal is ( in terms of nodes ): ");
+//        for (Node x: aStar.getPathToGoalNode()) {
+//            printMatrix(x);
 //        }
-//
-//        /************ Manhattan Distance ******************/
-//        System.out.println("\n");
-//
-//        if(!aStar.solveManhattan()){
-//            System.out.println("Failure to find solution");
-//            return;
+
+        /************ Permutation Inversion ******************/
+        System.out.println("\n");
+
+        if(!aStar.solvePermutation()){
+            System.out.println("Failure to find solution");
+            return;
+        }
+        System.out.println("Solution Found using A* Search - Permutation Inversion!!");
+
+        System.out.println("Search Path Cost: " + aStar.getSearchPathCost());
+        System.out.println("Path Cost: " + aStar.getPathCost());
+
+        System.out.println("Path to Goal is: ");
+        for (String x: aStar.getPathToGoal()) {
+            System.out.print(x + ", ");
+        }
+
+//        System.out.println();
+//        System.out.println("Path to Goal is ( in terms of nodes ): ");
+//        for (Node x: aStar.getPathToGoalNode()) {
+//            printMatrix(x);
 //        }
-//        System.out.println("Solution Found using A* Search - Manhattan Distance!!");
-//
-//        System.out.println("Search Path Cost: " + aStar.getSearchPathCost());
-//        System.out.println("Path Cost: " + aStar.getPathCost());
-//
-//        System.out.println("Path to Goal is: ");
-//        for (String x: aStar.getPathToGoal()) {
-//            System.out.print(x + ", ");
-//        }
-//
-//        /************ Permutation Inversion ******************/
-//        System.out.println("\n");
-//
-//        if(!aStar.solvePermutation()){
-//            System.out.println("Failure to find solution");
-//            return;
-//        }
-//        System.out.println("Solution Found using A* Search - Permutation Inversion!!");
-//
-//        System.out.println("Search Path Cost: " + aStar.getSearchPathCost());
-//        System.out.println("Path Cost: " + aStar.getPathCost());
-//
-//        System.out.println("Path to Goal is: ");
-//        for (String x: aStar.getPathToGoal()) {
-//            System.out.print(x + ", ");
-//        }
-//
-//        /************ Inadmissible Heuristics ******************/
-//        System.out.println("\n");
-//
-//        if(!aStar.solveInadmissible()){
-//            System.out.println("Failure to find solution");
-//            return;
-//        }
-//        System.out.println("Solution Found using A* Search - Inadmissible Search!!");
-//
-//        System.out.println("Search Path Cost: " + aStar.getSearchPathCost());
-//        System.out.println("Path Cost: " + aStar.getPathCost());
-//
-//        System.out.println("Path to Goal is: ");
-//        for (String x: aStar.getPathToGoal()) {
-//            System.out.print(x + ", ");
+
+        /************ Inadmissible Heuristics ******************/
+        System.out.println("\n");
+
+        if(!aStar.solveInadmissible()){
+            System.out.println("Failure to find solution");
+            return;
+        }
+        System.out.println("Solution Found using A* Search - Inadmissible Search!!");
+
+        System.out.println("Search Path Cost: " + aStar.getSearchPathCost());
+        System.out.println("Path Cost: " + aStar.getPathCost());
+
+        System.out.println("Path to Goal is: ");
+        for (String x: aStar.getPathToGoal()) {
+            System.out.print(x + ", ");
+        }
+
+//        System.out.println();
+//        System.out.println("Path to Goal is ( in terms of nodes ): ");
+//        for (Node x: aStar.getPathToGoalNode()) {
+//            printMatrix(x);
 //        }
         /*****************************************************************************************************/
 
     }
 
     // prints out the 3x3 matrix
-    public static void printMatrix(Node n)
-    {
+    public static void printMatrix(Node n) {
         String[][] a = n.getState();
         for( int i = 0; i < 3; i++)
         {

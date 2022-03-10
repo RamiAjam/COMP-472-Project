@@ -1,28 +1,32 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class AStar {
 
-    private long searchPathCost;
-    private int pathCost;
-    private ArrayList<String> pathToGoal = new ArrayList<>();
+    private long searchPathCost; // number of nodes that has been explored during the search
+    private int pathCost; // the cost from the start node to the goal node
+    private ArrayList<String> pathToGoal = new ArrayList<>(); // list of strings representing the moves that needs to be done to reach the goal state
+    private ArrayList<Node> pathToGoalNode = new ArrayList<>(); // list of nodes representing successor states that needs to be followed to reach the goal state
     private final Node goalState;
 
+    // the open list that holds the generated but not yet explored nodes using the hamming distance
     private final ArrayList<String> openListHamStr = new ArrayList<>();
     private final Queue<Node> openListHam = new PriorityQueue<>(Node.hammingStarCompare);
 
+    // the open list that holds the generated but not yet explored nodes using the Mnahattan distance
     private final ArrayList<String> openListManStr = new ArrayList<>();
     private final Queue<Node> openListMan = new PriorityQueue<>(Node.manhattanStarCompare);
 
+    // the open list that holds the generated but not yet explored nodes using the Permutation Inversion
     private final ArrayList<String> openListPerStr = new ArrayList<>();
     private final Queue<Node> openListPer = new PriorityQueue<>(Node.permutationStarCompare);
 
+    // the open list that holds the generated but not yet explored nodes using the Inadmissible heuristic
     private final ArrayList<String> openListNilssonStr = new ArrayList<>();
     private final Queue<Node> openListNilsson = new PriorityQueue<>(Node.inadmissibleStarCompare);
 
-
+    // Constructor
     public AStar(Node root, Node goalState){
 
         this.goalState = goalState;
@@ -34,7 +38,12 @@ public class AStar {
         openListPerStr.add(root.getStateStringRep());
         openListNilsson.add(root);
         openListNilssonStr.add(root.getStateStringRep());
+        pathToGoalNode.add(root);
 
+    }
+
+    public ArrayList<Node> getPathToGoalNode() {
+        return pathToGoalNode;
     }
 
     public int getPathCost() {
@@ -49,11 +58,13 @@ public class AStar {
         return searchPathCost;
     }
 
+    // solve the puzzle using Best First search with the Hamming distance heuristic
     public boolean solveHamming(){
 
         searchPathCost = 0;
         pathCost = 0;
         pathToGoal = new ArrayList<>();
+        pathToGoalNode = new ArrayList<>();
         ArrayList<String> closedList = new ArrayList<>();
         Node currentNode;
 
@@ -73,15 +84,19 @@ public class AStar {
             if(currentNode.compareNodes(goalState)){
 
                 ArrayList<String> temp = new ArrayList<>();
+                ArrayList<Node> temp2 = new ArrayList<>();
 
+                // backtrack while adding the moves until you reach the parent node
                 while(currentNode.getParent() != null){
                     temp.add(currentNode.getParentToChildMove());
+                    temp2.add(currentNode);
                     currentNode = currentNode.getParent();
                 }
 
                 // Append the elements in reverse order
                 for(int i = temp.size() - 1; i >= 0; i--) {
                     pathToGoal.add(temp.get(i));
+                    pathToGoalNode.add(temp2.get(i));
                 }
 
                 pathCost = pathToGoal.size();
@@ -89,7 +104,9 @@ public class AStar {
                 return true;
             }
 
-            // checks if the child is in the closed list then adds it to the BEGINNING of the list
+            // checks if the child is not in the closed list then adds it to the END of the list. If a child
+            // already exists in the openList, the new same child can be added as long as it has a better
+            // heuristic value. The list then gets sorted using the priority queue data structure
             for(Node child: currentNode.generateChildren()){
                 child.setNodeCost(child.getParent().getNodeCost() + 1);
                 child.setFxHam(hammingDistance(child) + child.getNodeCost());
@@ -105,11 +122,13 @@ public class AStar {
         return false;
     }
 
+    // solve the puzzle using Best First search with the Manhattan Distance heuristic
     public boolean solveManhattan(){
 
         searchPathCost = 0;
         pathCost = 0;
         pathToGoal = new ArrayList<>();
+        pathToGoalNode = new ArrayList<>();
         ArrayList<String> closedList = new ArrayList<>();
         Node currentNode;
 
@@ -130,15 +149,19 @@ public class AStar {
             if(currentNode.compareNodes(goalState)){
 
                 ArrayList<String> temp = new ArrayList<>();
+                ArrayList<Node> temp2 = new ArrayList<>();
 
+                // backtrack while adding the moves until you reach the parent node
                 while(currentNode.getParent() != null){
                     temp.add(currentNode.getParentToChildMove());
+                    temp2.add(currentNode);
                     currentNode = currentNode.getParent();
                 }
 
                 // Append the elements in reverse order
                 for(int i = temp.size() - 1; i >= 0; i--) {
                     pathToGoal.add(temp.get(i));
+                    pathToGoalNode.add(temp2.get(i));
                 }
 
                 pathCost = pathToGoal.size();
@@ -146,7 +169,9 @@ public class AStar {
                 return true;
             }
 
-            // checks if the child is in the closed list then adds it to the BEGINNING of the list
+            // checks if the child is not in the closed list then adds it to the END of the list. If a child
+            // already exists in the openList, the new same child can be added as long as it has a better
+            // heuristic value. The list then gets sorted using the priority queue data structure
             for(Node child: currentNode.generateChildren()){
                 child.setNodeCost(child.getParent().getNodeCost() + 1);
                 child.setFxMan(manhattanDistance(child) + child.getNodeCost());
@@ -162,11 +187,13 @@ public class AStar {
         return false;
     }
 
+    // solve the puzzle using Best First search with the Permuttion Inversion heuristic
     public boolean solvePermutation(){
 
         searchPathCost = 0;
         pathCost = 0;
         pathToGoal = new ArrayList<>();
+        pathToGoalNode = new ArrayList<>();
         ArrayList<String> closedList = new ArrayList<>();
         Node currentNode;
 
@@ -187,15 +214,19 @@ public class AStar {
             if(currentNode.compareNodes(goalState)){
 
                 ArrayList<String> temp = new ArrayList<>();
+                ArrayList<Node> temp2 = new ArrayList<>();
 
+                // backtrack while adding the moves until you reach the parent node
                 while(currentNode.getParent() != null){
                     temp.add(currentNode.getParentToChildMove());
+                    temp2.add(currentNode);
                     currentNode = currentNode.getParent();
                 }
 
                 // Append the elements in reverse order
                 for(int i = temp.size() - 1; i >= 0; i--) {
                     pathToGoal.add(temp.get(i));
+                    pathToGoalNode.add(temp2.get(i));
                 }
 
                 pathCost = pathToGoal.size();
@@ -203,7 +234,9 @@ public class AStar {
                 return true;
             }
 
-            // checks if the child is in the closed list then adds it to the BEGINNING of the list
+            // checks if the child is not in the closed list then adds it to the END of the list. If a child
+            // already exists in the openList, the new same child can be added as long as it has a better
+            // heuristic value. The list then gets sorted using the priority queue data structure
             for(Node child: currentNode.generateChildren()){
                 child.setNodeCost(child.getParent().getNodeCost() + 1);
                 child.setFxPer(permutationInversion(child) + child.getNodeCost());
@@ -219,11 +252,13 @@ public class AStar {
         return false;
     }
 
+    // solve the puzzle using Best First search with the inadmissible heuristic
     public boolean solveInadmissible(){
 
         searchPathCost = 0;
         pathCost = 0;
         pathToGoal = new ArrayList<>();
+        pathToGoalNode = new ArrayList<>();
         ArrayList<String> closedList = new ArrayList<>();
         Node currentNode;
 
@@ -244,15 +279,19 @@ public class AStar {
             if(currentNode.compareNodes(goalState)){
 
                 ArrayList<String> temp = new ArrayList<>();
+                ArrayList<Node> temp2 = new ArrayList<>();
 
+                // backtrack while adding the moves until you reach the parent node
                 while(currentNode.getParent() != null){
                     temp.add(currentNode.getParentToChildMove());
+                    temp2.add(currentNode);
                     currentNode = currentNode.getParent();
                 }
 
                 // Append the elements in reverse order
                 for(int i = temp.size() - 1; i >= 0; i--) {
                     pathToGoal.add(temp.get(i));
+                    pathToGoalNode.add(temp2.get(i));
                 }
 
                 pathCost = pathToGoal.size();
@@ -260,7 +299,9 @@ public class AStar {
                 return true;
             }
 
-            // checks if the child is in the closed list then adds it to the BEGINNING of the list
+            // checks if the child is not in the closed list then adds it to the END of the list. If a child
+            // already exists in the openList, the new same child can be added as long as it has a better
+            // heuristic value. The list then gets sorted using the priority queue data structure
             for(Node child: currentNode.generateChildren()){
                 child.setNodeCost(child.getParent().getNodeCost() + 1);
                 child.setFxIndamissible(nilssonHeuristic(child) + child.getNodeCost());
